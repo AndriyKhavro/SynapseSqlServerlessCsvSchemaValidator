@@ -14,11 +14,18 @@ namespace SynapseSqlServerlessCsvSchemaValidator
             string folder = args[0];
             string schema = args[1];
 
-            var columns = schema.Split(',');
+            for (int digit = 0; digit < 10; digit++)
+            {
+                schema = schema.Replace($"{digit}{FieldTerminator}", $"{digit};");
+            }
+
+            var columns = schema.Split(FieldTerminator);
 
             var functions = columns.Select(CanBeParsed).ToArray();
 
-            var files = Directory.EnumerateFiles(folder);
+            var files = Directory.EnumerateFiles(folder, "*.csv");
+
+            Console.WriteLine(string.Join('\n', columns.Select((col, i) => $"{col}. Index: {i+1}")));
 
             foreach (var file in files)
             {
